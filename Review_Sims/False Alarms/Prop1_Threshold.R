@@ -1,6 +1,7 @@
 library(mvtnorm)
 library(fda)
 library(tidyverse)
+library(kableExtra)
 
 
 #######
@@ -214,3 +215,12 @@ for(i in 1:length(thresholds)){
 
 constant_df <- data.frame(false_one = false_one_results, false_two = false_two_results)
 
+#######
+#Table 1
+#######
+
+table_df <- data.frame(Scenario1 = gp_df$false_two, Scenario2 = t_df$false_two, 
+                       Scenario3 = constant_df$false_two,
+                       row.names = c("0.01", "0.05", "0.1", "0.2")) 
+table_1 <- kbl(table_df) %>% kable_classic_2(full_width = F) %>% kable_styling(font_size = 30)
+save_kable(table_1, file = "./Results/table1.png")
