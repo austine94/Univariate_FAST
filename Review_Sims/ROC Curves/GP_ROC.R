@@ -21,9 +21,10 @@ theme_idris <- function() {
 
 set.seed(10)
 
-time <- 1:500
+time <- 1:1000
 covar <- squared_exp_covar(1:length(time), 40, 0.3)
 lt <- length(time)
+bas <- create.bspline.basis(range(time), nbasis = 60, norder = 6)
 
 n_train <- 100
 n_test <- 100
@@ -111,7 +112,7 @@ covar <- squared_exp_covar(1:length(time), 40, 0.3)
 lt <- length(time)
 
 n_train <- 100
-n_test <- 100
+n_test <- 1000
 
 x_list <- vector("list", n_test)
 
@@ -191,7 +192,7 @@ covar <- squared_exp_covar(1:length(time), 40, 0.3)
 lt <- length(time)
 
 n_train <- 100
-n_test <- 100
+n_test <- 1000
 
 x_list <- vector("list", n_test)
 
@@ -217,7 +218,7 @@ yfd <- smooth.basis(time, y, bas)
 
 quantiles <- c(1e-12, 1e-3, 0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04, 0.045, 0.05)
 
-thresholds <- qnorm(1 - quantiles / (2 * (length(time) - 1)))
+thresholds <- c(qnorm(1 - quantiles / (2 * (length(time) - 1))))
 
 detected_one_results <- detected_two_results <- rep(0, length(thresholds))
 delay_one_results <- delay_two_results <- rep(0, length(thresholds))
@@ -264,7 +265,7 @@ ggplot(df_noise) + geom_line(aes(x = false_one, y = detected_one, col = "Order O
 
 ###############################
 
-ggplot() +
+g1 <- ggplot() +
   geom_line(aes(x = df_polynomial$false_one, y = df_polynomial$detected_one, col = "Polynomial")) +
   geom_line(aes(x = df_sinusoidal$false_one, y = df_sinusoidal$detected_one, col = "Sinusoidal")) +
   geom_line(aes(x = df_noise$false_one, y = df_noise$detected_one, col = "Noise")) +
@@ -273,8 +274,9 @@ ggplot() +
   theme(legend.position = "none", plot.title = element_text(hjust = 0.5),
         axis.text=element_text(size=12),
         axis.title=element_text(size=14))
+ggsave("./Results/Figure5a.png", g1)
 
-ggplot() +
+g2 <- ggplot() +
   geom_line(aes(x = df_polynomial$false_two, y = df_polynomial$detected_two, col = "Polynomial")) +
   geom_line(aes(x = df_sinusoidal$false_two, y = df_sinusoidal$detected_two, col = "Sinusoidal")) +
   geom_line(aes(x = df_noise$false_two, y = df_noise$detected_two, col = "Noise")) +
@@ -283,3 +285,5 @@ ggplot() +
   theme(legend.position = "none", plot.title = element_text(hjust = 0.5),
         axis.text=element_text(size=12),
         axis.title=element_text(size=14))
+ggsave("./Results/Figure5b.png", g2)
+
