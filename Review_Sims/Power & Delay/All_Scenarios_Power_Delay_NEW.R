@@ -355,7 +355,7 @@ result_df <- rbind(result_df, new_result_df_row)
 
 set.seed(2000)
 
-covar2 <- squared_exp_covar(101:200, 10, 0.3)  #for shape anomaly
+covar2 <- squared_exp_covar(101:200, 15, 0.3)  #for shape anomaly
 
 x_underlying <- sin(2 * pi * time / 200) + cos(2*pi*time/200)
 

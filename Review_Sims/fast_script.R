@@ -235,6 +235,71 @@ eval_mat_scale <- function(eval_mat){
 
 }
 
+########
+#Function for BIC
+########
+
+pda_bic <- function(time, fd, m, basis = NULL, penalty_order = 1, penalty_param = 0){
+  #time is the obs region
+  #fd is the vanilla fd object
+  #m is the ODE order
+  
+  if(!is.numeric(time)){
+    stop("time must be a vector of numerics")
+  }
+  
+  if( !inherits(fd, "fdSmooth") ){
+    stop("fd must either be of class fdSmooth")
+  }
+  
+  if(round(m) != m | m < 1){
+    stop("Error m: m needs to be a positive integer")
+  }
+  
+  if( !is.null(basis) ){
+    
+    if(!inherits(basis, "basisfd")){
+      stop("basis must either be null, or of class basisfd")
+    }
+    
+    if( all(basis$rangeval != fd$fd$basis$rangeval)){
+      stop("Basis range must match the range of the basis for the fd object")
+    }
+    
+  }else{
+    
+    basis = fd$fd$basis   #use the original basis
+  }
+  
+  if(round(penalty_order) != penalty_order | penalty_order < 0){
+    stop("penalty_order needs to be a positive integer")
+  }
+  
+  if( !is.numeric(penalty_param) | penalty_param < 0){
+    stop("penalty_param must be a positive numeric")
+  }
+  
+  #first fit the ODE
+  
+  len_t <- length(time)
+  n_obs <- ncol(fd$y)
+  
+  ODE <- ode_fit(time, fd, m, basis = basis, penalty_order = penalty_order,
+                 penalty_param = penalty_param)
+  residual_functions <- eval.fd(time, ODE$residuals)  #This evaluates the residual functions
+  scaled_residual_functions <- residual_functions
+  for(i in 1:nrow(residual_functions)){  #scale to unit variance for llhd expression to hold
+    scaled_residual_functions[i,] <- (residual_functions[i,]) / sd(residual_functions[i,])
+  }
+  #mean zero unit variance
+  SSE <- scaled_residual_functions^2 %>% sum()   #sum of square error
+  
+  likelihood <- (-n_obs/2)*(log(SSE/n_obs))
+  BIC <- m * log(n_obs) - 2*likelihood
+  return(c(BIC, SSE))
+}    
+
+
 ############
 #Function for squared exponential covariance
 ############
