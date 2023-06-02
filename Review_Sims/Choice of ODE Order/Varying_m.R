@@ -182,6 +182,53 @@ for(j in 1:ncol(y)){
 new_result_df_row <- fast_detected/n_test
 result_df <- rbind(result_df, new_result_df_row)
 
+####################
+#Model 9 - T Residuals, Polynomial Anomalies
+################
+
+set.seed(40)
+
+x_underlying <- sin(2 * pi * time / 200) + cos(2*pi*time/200)
+
+fast_detected <- rep(0, 5)
+
+#generate the 100  test observations
+y <- matrix(rep(x_underlying, n_test), nrow = length(time), ncol = n_test, byrow = FALSE)
+noise <- rmvt(n_test, df=2, sigma = covar) %>% t()
+y <- y + noise
+for(i in 1:ncol(y)){
+  a <- runif(4, 0.5, 1.5)
+  b <- runif(1, 0, 0.5)
+  y[101:200, i] <- y[101:200,i] + b[1] + a[1]*((time[101:200] - time[100]) / (lt)) +
+    a[2]*((time[101:200] - time[100])^2/(lt)^2) + a[3]*((time[101:200] - time[100])^3/(lt)^3)
+  + a[4]*((time[101:200] - time[100])^4/(lt)^4)
+}
+bas <- create.bspline.basis(range(time), nbasis = 60, norder = 8)
+yfd <- smooth.basis(time, y, bas)
+
+threshold <- qnorm( 1 - (0.05 / (2*(length(time)-1)) ) )
+
+for(j in 1:ncol(y)){
+  #training data for each rep of the simulation
+  x <- matrix(rep(x_underlying, n_train), nrow = length(time), ncol = n_train, byrow = FALSE)
+  noise <- rmvt(n_train, df=2,sigma = covar) %>% t()
+  x <- x + noise
+  xfd <- smooth.basis(time, x, bas)
+  
+  for(i in 1:5){
+    fast_run <- fast(time, xfd, i, yfd$fd[j], threshold)
+    if( !is.na(fast_run$detection_time[1])){
+      fast_detected[i] <- fast_detected[i] + 1
+    }
+  }
+  print(j)
+}
+
+new_result_df_row <- fast_detected/n_test
+
+result_df <- rbind(result_df, new_result_df_row)
+
+
 #####
 
 result_df <- result_df[-1,]
