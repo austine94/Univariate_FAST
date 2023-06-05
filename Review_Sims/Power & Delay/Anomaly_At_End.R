@@ -44,8 +44,8 @@ for(j in 1:ncol(y)){
   if( !is.na(fast_run$detection_time[1])){    #if detected
     
     fast_detected <- fast_detected + 1
-    if(fast_run$detection_time > 100){  #ADD as in Tartakovsky
-      fast_delay[j] <- (fast_run$detection_time - 100)
+    if(fast_run$detection_time > 0){  #ADD as in Tartakovsky
+      fast_delay[j] <- (fast_run$detection_time - 0)
     }else{
       fast_delay[j] <- 0 
       fast_detected_after_change <- fast_detected_after_change - 1    }
@@ -96,8 +96,8 @@ for(j in 1:ncol(y)){
   if( !is.na(fast_run$detection_time[1])){    #if detected
     
     fast_detected <- fast_detected + 1
-    if(fast_run$detection_time > 100){  #ADD as in Tartakovsky
-      fast_delay[j] <- (fast_run$detection_time - 100)
+    if(fast_run$detection_time > 0){  #ADD as in Tartakovsky
+      fast_delay[j] <- (fast_run$detection_time - 0)
     }else{
       fast_delay[j] <- 0 
       fast_detected_after_change <- fast_detected_after_change - 1    }
@@ -134,9 +134,9 @@ y <- y + noise
 for(i in 1:ncol(y)){
   a <- runif(4, 0.5, 1.5)
   b <- runif(1, 0, 0.5)
-  y[101:200, i] <- y[101:200,i] + b[1] + a[1]*((time[101:200] - time[100]) / (lt)) +
-    a[2]*((time[101:200] - time[100])^2/(lt)^2) + a[3]*((time[101:200] - time[100])^3/(lt)^3)
-  + a[4]*((time[101:200] - time[100])^4/(lt)^4)
+  y[401:500, i] <- y[401:500,i] + b[1] + a[1]*((time[401:500] - time[400]) / (lt)) +
+    a[2]*((time[401:500] - time[400])^2/(lt)^2) + a[3]*((time[401:500] - time[400])^3/(lt)^3)
+  + a[4]*((time[401:500] - time[400])^4/(lt)^4)
 }
 bas <- create.bspline.basis(range(time), nbasis = 60, norder = 6)
 yfd <- smooth.basis(time, y, bas)
@@ -155,11 +155,11 @@ for(j in 1:ncol(y)){
   if( !is.na(fast_run$detection_time[1])){    #if detected
     
     fast_detected <- fast_detected + 1
-    if(fast_run$detection_time > 100){  #ADD as in Tartakovsky
-      fast_delay[j] <- (fast_run$detection_time - 100)
+    if(fast_run$detection_time > 400){  #ADD as in Tartakovsky
+      fast_delay[j] <- (fast_run$detection_time - 400)
     }else{
       fast_delay[j] <- 0 
-      fast_detected_after_change <- fast_detected_after_change - 1    }
+      fast_detected_after_change <- fast_detected_after_change -1     }
   }
   print(j)
 }
@@ -190,7 +190,7 @@ fast_delay <- rep(NA, 100)
 y <- matrix(rep(x_underlying, n_test), nrow = length(time), ncol = n_test, byrow = FALSE)
 noise <- rmvnorm(n_test, mean = rep(0, length(time)), sigma = covar) %>% t()
 y <- y + noise
-start_times <- sample(101:491, n_test, TRUE)
+start_times <- sample(401:491, n_test, TRUE)
 end_times <- sapply(start_times, function(x) min((x+99), lt))
 for(i in 1:ncol(y)){
   a <- runif(4, 0.5, 1.5)
@@ -199,7 +199,7 @@ for(i in 1:ncol(y)){
     a[1]*((time[(start_times[i]:end_times[i])] - time[start_times[i]]) / (lt)) +
     a[2]*((time[(start_times[i]:end_times[i])] - time[start_times[i]])^2/(lt)^2) +
     a[3]*((time[(start_times[i]:end_times[i])] - time[start_times[i]])^3/(lt)^3) + 
-            a[4]*((time[(start_times[i]:end_times[i])] - time[start_times[i]])^4/(lt)^4)
+    a[4]*((time[(start_times[i]:end_times[i])] - time[start_times[i]])^4/(lt)^4)
 }
 bas <- create.bspline.basis(range(time), nbasis = 60, norder = 6)
 yfd <- smooth.basis(time, y, bas)
@@ -222,7 +222,7 @@ for(j in 1:ncol(y)){
       fast_delay[j] <- (fast_run$detection_time - (start_times[i] - 1))
     }else{
       fast_delay[j] <- 0 
-      fast_detected_after_change <- fast_detected_after_change - 1    }
+      fast_detected_after_change <- fast_detected_after_change -1     }
   }
   print(j)
 }
@@ -255,8 +255,8 @@ noise <- rmvnorm(n_test, mean = rep(0, length(time)), sigma = covar) %>% t()
 y <- y + noise
 for(i in 1:ncol(y)){
   a <- runif(2, 0.1, 0.5)
-  y[101:200, i] <- y[101:200,i] + a[1]*(sin(2*pi*time[101:200]/50) - sin(2*pi*time[100])) +
-    a[2]*(cos(2*pi*time[101:200]/50) - cos(2*pi*time[100]))
+  y[401:500, i] <- y[401:500,i] + a[1]*(sin(2*pi*time[401:500]/50) - sin(2*pi*time[400])) +
+    a[2]*(cos(2*pi*time[401:500]/50) - cos(2*pi*time[400]))
 }
 bas <- create.bspline.basis(range(time), nbasis = 60, norder = 6)
 yfd <- smooth.basis(time, y, bas)
@@ -275,8 +275,8 @@ for(j in 1:ncol(y)){
   if( !is.na(fast_run$detection_time[1])){    #if detected
     
     fast_detected <- fast_detected + 1
-    if(fast_run$detection_time > 100){  #ADD as in Tartakovsky
-      fast_delay[j] <- (fast_run$detection_time - 100)
+    if(fast_run$detection_time > 400){  #ADD as in Tartakovsky
+      fast_delay[j] <- (fast_run$detection_time - 400)
     }else{
       fast_delay[j] <- 0 
       fast_detected_after_change <- fast_detected_after_change - 1    }
@@ -311,7 +311,7 @@ y <- matrix(rep(x_underlying, n_test), nrow = length(time), ncol = n_test, byrow
 noise <- rmvnorm(n_test, mean = rep(0, length(time)), sigma = covar) %>% t()
 y <- y + noise
 for(i in 1:ncol(y)){
-  y[175:200, i] <- y[175:200,i] - x_underlying[175:200]
+  y[475:500, i] <- y[475:500,i] - x_underlying[475:500]
 }
 bas <- create.bspline.basis(range(time), nbasis = 60, norder = 6)
 yfd <- smooth.basis(time, y, bas)
@@ -330,8 +330,8 @@ for(j in 1:ncol(y)){
   if( !is.na(fast_run$detection_time[1])){    #if detected
     
     fast_detected <- fast_detected + 1
-    if(fast_run$detection_time > 100){  #ADD as in Tartakovsky
-      fast_delay[j] <- (fast_run$detection_time - 100)
+    if(fast_run$detection_time > 400){  #ADD as in Tartakovsky
+      fast_delay[j] <- (fast_run$detection_time - 400)
     }else{
       fast_delay[j] <- 0 
       fast_detected_after_change <- fast_detected_after_change - 1    }
@@ -355,7 +355,7 @@ result_df <- rbind(result_df, new_result_df_row)
 
 set.seed(2000)
 
-covar2 <- squared_exp_covar(101:200, 15, 0.3)  #for shape anomaly
+covar2 <- squared_exp_covar(401:500, 15, 0.3)  #for shape anomaly
 
 x_underlying <- sin(2 * pi * time / 200) + cos(2*pi*time/200)
 
@@ -369,7 +369,7 @@ noise <- rmvnorm(n_test, mean = rep(0, length(time)), sigma = covar) %>% t()
 noise_anomaly <- rmvnorm(100, mean = rep(0, 100), sigma = covar2) %>% t()
 y <- y + noise
 for(i in 1:ncol(y)){
-  y[101:200, i] <- y[101:200,i] - noise[101:200, i] + noise_anomaly[, i]
+  y[401:500, i] <- y[401:500,i] - noise[401:500, i] + noise_anomaly[, i]
 }
 bas <- create.bspline.basis(range(time), nbasis = 60, norder = 6)
 yfd <- smooth.basis(time, y, bas)
@@ -388,11 +388,11 @@ for(j in 1:ncol(y)){
   if( !is.na(fast_run$detection_time[1])){    #if detected
     
     fast_detected <- fast_detected + 1
-    if(fast_run$detection_time > 100){  #ADD as in Tartakovsky
-      fast_delay[j] <- (fast_run$detection_time - 100)
+    if(fast_run$detection_time > 400){  #ADD as in Tartakovsky
+      fast_delay[j] <- (fast_run$detection_time - 400)
     }else{
       fast_delay[j] <- 0 
-      fast_detected_after_change <- fast_detected_after_change - 1    }
+      fast_detected_after_change <- fast_detected_after_change -1    }
   }
   print(j)
 }
@@ -424,8 +424,8 @@ y <- matrix(rep(x_underlying, n_test), nrow = length(time), ncol = n_test, byrow
 noise <- rmvnorm(n_test, mean = rep(0, length(time)), sigma = covar) %>% t()
 y <- y + noise
 for(i in 1:ncol(y)){
-  translation <- sample(c(-3:-1, 1:3), 1)
-  y[101:200, i] <- y[101:200,i] - x_underlying[101:200] + x_underlying[(101 - translation):(200-translation)]
+  translation <- sample(1:6, 1)
+  y[401:500, i] <- y[401:500,i] - x_underlying[401:500] + x_underlying[(401 - translation):(500-translation)]
 }
 bas <- create.bspline.basis(range(time), nbasis = 60, norder = 6)
 yfd <- smooth.basis(time, y, bas)
@@ -444,8 +444,8 @@ for(j in 1:ncol(y)){
   if( !is.na(fast_run$detection_time[1])){    #if detected
     
     fast_detected <- fast_detected + 1
-    if(fast_run$detection_time > 100){  #ADD as in Tartakovsky
-      fast_delay[j] <- (fast_run$detection_time - 100)
+    if(fast_run$detection_time > 400){  #ADD as in Tartakovsky
+      fast_delay[j] <- (fast_run$detection_time - 400)
     }else{  
       fast_delay[j] <- 0 
       fast_detected_after_change <- fast_detected_after_change - 1    }
@@ -482,9 +482,9 @@ y <- y + noise
 for(i in 1:ncol(y)){
   a <- runif(4, 0.5, 1.5)
   b <- runif(1, 0, 0.5)
-  y[101:200, i] <- y[101:200,i] + b[1] + a[1]*((time[101:200] - time[100]) / (lt)) +
-    a[2]*((time[101:200] - time[100])^2/(lt)^2) + a[3]*((time[101:200] - time[100])^3/(lt)^3)
-  + a[4]*((time[101:200] - time[100])^4/(lt)^4)
+  y[401:500, i] <- y[401:500,i] + b[1] + a[1]*((time[401:500] - time[400]) / (lt)) +
+    a[2]*((time[401:500] - time[400])^2/(lt)^2) + a[3]*((time[401:500] - time[400])^3/(lt)^3)
+  + a[4]*((time[401:500] - time[400])^4/(lt)^4)
 }
 bas <- create.bspline.basis(range(time), nbasis = 60, norder = 6)
 yfd <- smooth.basis(time, y, bas)
@@ -503,8 +503,8 @@ for(j in 1:ncol(y)){
   if( !is.na(fast_run$detection_time[1])){    #if detected
     
     fast_detected <- fast_detected + 1
-    if(fast_run$detection_time > 100){  #ADD as in Tartakovsky
-      fast_delay[j] <- (fast_run$detection_time - 100)
+    if(fast_run$detection_time > 400){  #ADD as in Tartakovsky
+      fast_delay[j] <- (fast_run$detection_time - 400)
     }else{
       fast_delay[j] <- 0 
       fast_detected_after_change <- fast_detected_after_change - 1

@@ -27,7 +27,7 @@ for(k in 1:length(s_len_vec)){ #iterate over each anomaly region length
   fast_detected_after_change <- 0
   fast_delay <- rep(NA, 100)
   
-  end_period <- 450
+  end_period <- 200
   start_period <- end_period - s_len_vec[k] + 1 #place anomalies at end of time
   
   #generate the 100  test observations
@@ -96,7 +96,7 @@ for(k in 1:length(s_len_vec)){ #iterate over each anomaly region length
   fast_detected_after_change <- 0
   fast_delay <- rep(NA, 100)
   
-  end_period <- 450
+  end_period <- 200
   start_period <- end_period - s_len_vec[k] + 1 #place anomalies at end of time
   
   #generate the 100  test observations
@@ -163,7 +163,7 @@ for(k in 1:length(s_len_vec)){ #iterate over each anomaly region length
   fast_detected_after_change <- 0
   fast_delay <- rep(NA, 100)
   
-  end_period <- 450
+  end_period <- 200
   start_period <- end_period - s_len_vec[k] + 1 #place anomalies at end of time
   covar2 <- squared_exp_covar((start_period:end_period), 15, 0.3)  #for shape anomaly
   
@@ -230,7 +230,7 @@ for(k in 1:length(s_len_vec)){ #iterate over each anomaly region length
   fast_detected_after_change <- 0
   fast_delay <- rep(NA, 100)
   
-  end_period <- 450
+  end_period <- 200
   start_period <- end_period - s_len_vec[k] + 1 #place anomalies at end of time
   
   #generate the 100  test observations
