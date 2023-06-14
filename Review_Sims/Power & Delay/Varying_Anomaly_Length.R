@@ -8,14 +8,12 @@ time <- 1:500
 covar <- squared_exp_covar(1:length(time), 40, 0.3)
 lt <- length(time)
 
-n_train <- 100
-n_test <- 100
+n_train <- 50
+n_test <- 50
 
 ################
 #Model 3 - GP Residuals, Magnitude Anomaly
 #################
-
-set.seed(10)
 
 fast_detected_by_s <- rep(NA, length(s_len_vec))
 fast_delay_by_s <- fast_delay_sd_by_s <- rep(NA, length(s_len_vec))
@@ -23,6 +21,8 @@ fast_delay_by_s <- fast_delay_sd_by_s <- rep(NA, length(s_len_vec))
 x_underlying <- sin(2 * pi * time / 200) + cos(2*pi*time/200)
 
 for(k in 1:length(s_len_vec)){ #iterate over each anomaly region length
+  set.seed(10)  #so only variable is the anomalies get longer
+
   fast_detected <- 0
   fast_detected_after_change <- 0
   fast_delay <- rep(NA, 100)
@@ -34,12 +34,13 @@ for(k in 1:length(s_len_vec)){ #iterate over each anomaly region length
   y <- matrix(rep(x_underlying, n_test), nrow = length(time), ncol = n_test, byrow = FALSE)
   noise <- rmvnorm(n_test, mean = rep(0, length(time)), sigma = covar) %>% t()
   y <- y + noise
+  a <- sample(c(-1,1), 3, TRUE) * runif(3, 0.01, 0.1)
   for(i in 1:ncol(y)){
-    a <- runif(3, 0.01, 0.1)
     y[(start_period:end_period), i] <- y[(start_period:end_period),i] + a[3] + a[1]*((time[(start_period:end_period)] - start_period) / (lt)) +
       a[2]*exp(-time[(start_period:end_period)])
   }
-  bas <- create.bspline.basis(range(time), nbasis = 40, norder = 6)
+  bas <- create.bspline.basis(range(time), nbasis = 60, norder = 6)
+  bas <- fdPar(bas, 2, 30)
   yfd <- smooth.basis(time, y, bas)
   
   threshold <- qnorm( 1 - (0.05 / (2*(length(time)-1)) ) )
@@ -83,14 +84,13 @@ model3_ADD_sd <- fast_delay_sd_by_s
 #Model 5 - GP Residuals, Sinusoidal Anomaly
 #################
 
-set.seed(400)
-
 fast_detected_by_s <- rep(NA, length(s_len_vec))
 fast_delay_by_s <- fast_delay_sd_by_s <- rep(NA, length(s_len_vec))
 
 x_underlying <- sin(2 * pi * time / 200) + cos(2*pi*time/200)
 
 for(k in 1:length(s_len_vec)){ #iterate over each anomaly region length
+  set.seed(400)
   fast_detected <- 0
   fast_detected_after_change <- 0
   fast_delay <- rep(NA, 100)
@@ -107,7 +107,6 @@ for(k in 1:length(s_len_vec)){ #iterate over each anomaly region length
     y[(start_period:end_period), i] <- y[(start_period:end_period),i] + a[1]*(sin(2*pi*time[(start_period:end_period)]/50) - sin(2*pi*start_period)) +
       a[2]*(cos(2*pi*time[(start_period:end_period)]/50) - cos(2*pi*start_period))
   }
-  bas <- create.bspline.basis(range(time), nbasis = 40, norder = 6)
   yfd <- smooth.basis(time, y, bas)
   
   threshold <- qnorm( 1 - (0.05 / (2*(length(time)-1)) ) )
@@ -150,14 +149,13 @@ model5_ADD_sd <- fast_delay_sd_by_s
 #Model 7 - GP Residuals, Covariance Change in Shape
 #################
 
-set.seed(400)
-
 fast_detected_by_s <- rep(NA, length(s_len_vec))
 fast_delay_by_s <- fast_delay_sd_by_s <- rep(NA, length(s_len_vec))
 
 x_underlying <- sin(2 * pi * time / 200) + cos(2*pi*time/200)
 
 for(k in 1:length(s_len_vec)){ #iterate over each anomaly region length
+  set.seed(300)
   fast_detected <- 0
   fast_detected_after_change <- 0
   fast_delay <- rep(NA, 100)
@@ -174,7 +172,6 @@ for(k in 1:length(s_len_vec)){ #iterate over each anomaly region length
   for(i in 1:ncol(y)){
     y[(start_period:end_period), i] <- y[(start_period:end_period),i] - noise[(start_period:end_period), i] + noise_anomaly[, i]
   }
-  bas <- create.bspline.basis(range(time), nbasis = 40, norder = 6)
   yfd <- smooth.basis(time, y, bas)
   
   threshold <- qnorm( 1 - (0.05 / (2*(length(time)-1)) ) )
@@ -217,14 +214,13 @@ model7_ADD_sd <- fast_delay_sd_by_s
 #Model 9 - T Residuals, Sinusoidal Anomaly
 #################
 
-set.seed(10000)
-
 fast_detected_by_s <- rep(NA, length(s_len_vec))
 fast_delay_by_s <- fast_delay_sd_by_s <- rep(NA, length(s_len_vec))
 
 x_underlying <- sin(2 * pi * time / 200) + cos(2*pi*time/200)
 
 for(k in 1:length(s_len_vec)){ #iterate over each anomaly region length
+  set.seed(10000)
   fast_detected <- 0
   fast_detected_after_change <- 0
   fast_delay <- rep(NA, 100)
@@ -241,7 +237,6 @@ for(k in 1:length(s_len_vec)){ #iterate over each anomaly region length
     y[(start_period:end_period), i] <- y[(start_period:end_period),i] + a[1]*(sin(2*pi*time[(start_period:end_period)]/50) - sin(2*pi*start_period)) +
       a[2]*(cos(2*pi*time[(start_period:end_period)]/50) - cos(2*pi*start_period))
   }
-  bas <- create.bspline.basis(range(time), nbasis = 40, norder = 6)
   yfd <- smooth.basis(time, y, bas)
   
   threshold <- qnorm( 1 - (0.05 / (2*(length(time)-1)) ) )
@@ -302,5 +297,12 @@ theme_idris <- function() {
   )
 }
 
-ggplot(varying_s_df) + geom_line() + theme_idris()
+ggplot(varying_s_df) +
+  geom_line(aes(x = s_len_vec, y = model3)) +
+  geom_line(aes(x = s_len_vec, y = model5)) +
+  geom_line(aes(x = s_len_vec, y = model7)) +
+  geom_line(aes(x = s_len_vec, y = model9)) +
+  theme(axis.text=element_text(size=12), axis.title=element_text(size=18))+
+  labs(x = "Time", y = "Proportion Detected")
+  theme_idris()
 

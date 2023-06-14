@@ -419,7 +419,7 @@ y <- matrix(rep(x_underlying, n_test), nrow = length(time), ncol = n_test, byrow
 noise <- rmvnorm(n_test, mean = rep(0, length(time)), sigma = covar) %>% t()
 y <- y + noise
 for(i in 1:ncol(y)){
-  translation <- sample(c(-3:-1, 1:3), 1)
+  translation <- sample(1:10, 1)
   y[101:200, i] <- y[101:200,i] - x_underlying[101:200] + x_underlying[(101 - translation):(200-translation)]
 }
 bas <- create.bspline.basis(range(time), nbasis = 60, norder = 6)
