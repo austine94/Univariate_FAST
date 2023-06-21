@@ -15,7 +15,7 @@ covar <- squared_exp_covar(1:length(time), 40, 0.05)
 lt <- length(time)
 
 n_train <- 100
-n_test <- 100
+n_test <- 500
 
 x_underlying <- (time/250)^3 + ((time-100)/500)^5 + sin(2*pi*time/40) 
 

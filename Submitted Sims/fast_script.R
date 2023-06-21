@@ -96,20 +96,20 @@ pdafast_manual_threshold <- function(time, fd, m, threshold, basis = NULL, penal
 
   #Next scale the evaluated residuals to obtain null hypothesis observations
 
-  eval_mat <- eval_mat_scale(eval_fd_mat)
+  eval_mat_scaled <- eval_mat_scale(eval_fd_mat)
 
   #We can now test this against a new observation:
   #compute derivates using fitted ODE
-  obs_step_change <- eval.fd(time, new_observation, Lfdobj = ODE$ODE)
+  obs_deriv <- eval.fd(time, new_observation, Lfdobj = ODE$ODE)
   #compute test statistic
-  obs_step_change <- obs_step_change %>% diff() %>% abs()
-  obs_step_change <- obs_step_change^2
+  obs_step_change <- obs_deriv %>% diff() %>% abs()
+  obs_step_change <- obs_step_change^2  #this is the raw score function
 
-  obs_step_change <- (obs_step_change - eval_mat$mean_value) #standardise to mean 0
+  obs_step_change <- (obs_step_change - eval_mat_scaled$mean_value) #standardise to mean 0
 
-  cusum <- cumsum(obs_step_change) %>% abs()
+  cusum <- cumsum(obs_step_change) %>% abs()  #this is the test statistic (unscaled)
   len_cusum <- length(cusum)
-  cusum <- cusum / (sqrt(1:len_cusum) * eval_mat$sd_value_bm)   #standardise to unit variance
+  cusum <- cusum / (sqrt(1:len_cusum) * eval_mat_scaled$sd_value_bm)   #standardise to unit variance
   #Now perform the detection
   if( sum(cusum > threshold) == 0 ){
     detection = NA
